@@ -7,6 +7,15 @@ const FrontendRoutes = [
             title: 'Home'
         }
     },
+    {
+        path: '/cart',
+        name: 'cart',
+        component: () => import('./pages/Cart'),
+        meta     : {
+            title: 'Cart',
+            requireAuth: true,
+        }
+    },
 
     {
         path: '/about',

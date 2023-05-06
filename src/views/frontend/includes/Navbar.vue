@@ -17,6 +17,12 @@
           </li>
         </ul>
         <ul class="navbar-nav">
+
+          <li class="nav-item">
+            <router-link to="cart"  type="button" class="btn btn-warning me-2"
+                         data-bs-toggle="tooltip" data-bs-placement="top" title="Login"
+            ><i class="fa-solid fa-cart-shopping"></i> {{ cartQuantityCount }}</router-link>
+          </li>
           <li class="nav-item" v-if="!user.name">
             <router-link to="login" type="button" class="btn btn-primary me-2"
                          data-bs-toggle="tooltip" data-bs-placement="top" title="Login"
@@ -24,7 +30,7 @@
           </li>
           <li class="nav-item" v-if="user.name">
             <div class="dropdown">
-              <button class="btn btn-info   dropdown-toggle" type="button" id="navbarDropdown"
+              <button class="btn btn-info  dropdown-toggle" type="button" id="navbarDropdown"
                       data-bs-toggle="dropdown" aria-expanded="false">
                 {{ getCurrentUser.name }}
               </button>
@@ -40,17 +46,23 @@
 </template>
 
 <script>
-import {mapGetters, mapState} from "vuex";
+import {mapGetters, mapState,mapActions} from "vuex";
 import ApiService      from "@/service/api.service";
 import * as JwtService        from "@/service/jwt.service";
 import store                  from "@/store";
 export default {
   name: "Navbar",
   computed:{
-    ...mapGetters(['getCurrentUser']),
+    ...mapGetters(['getCurrentUser','cartQuantityCount']),
     ...mapState(['user']),
   },
+  mounted() {
+    this.getCart();
+  },
   methods: {
+    ...mapActions([
+      'getCart'
+    ]),
     logout() {
       const token = JwtService.getToken();
       if (typeof token != "undefined") {

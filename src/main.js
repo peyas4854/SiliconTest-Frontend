@@ -27,11 +27,13 @@ import * as JwtService from "@/service/jwt.service";
 
 ApiService.init();
 
+// Global Loader Spinner
+import {RotateSquare2} from 'vue-loading-spinner'
+
 // route check
 router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.requireAuth)) {
         if (!JwtService.getToken()) {
-            console.log('go login')
             next({
                 name: 'login',
                 params: {nextUrl: to.fullPath}
@@ -45,7 +47,6 @@ router.beforeEach((to, from, next) => {
     }
     if (to.name == 'login') {
         if (JwtService.getToken()) {
-            console.log('home home ')
             next({
                 name: 'home',
                 params: {nextUrl: to.fullPath}
@@ -60,7 +61,6 @@ router.beforeEach((to, from, next) => {
             store.commit("SET_USER", response.data);
             next()
         }).catch(error => {
-            JwtService.destroyToken();
             next({name: `login`})
         })
     }
@@ -71,5 +71,14 @@ router.beforeEach((to, from, next) => {
         document.title = `${to.meta.title} - ${process.env.VUE_APP_TITLE}` || process.env.VUE_APP_TITLE
     })
 });
-
-createApp(App).use(store).use(router).mount("#app");
+// vue instance
+const app = createApp(App)
+app.config.globalProperties.$filters = {
+    currencyTK(value) {
+        return 'Tk. ' + value
+    }
+}
+app.use(store)
+    .use(router)
+    .component('loader',RotateSquare2)
+    .mount("#app");

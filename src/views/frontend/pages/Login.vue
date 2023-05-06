@@ -65,6 +65,7 @@ export default {
       ApiService.post('/login', this.form).then((res) => {
         console.log('res', res.data.token);
         JwtService.saveToken(res.data.token);
+        localStorage.setItem("expires_at", res.data.expires_at);
         ApiService.init();
         store.commit("REDIRECT_AFTER_LOGIN", res.data.user);
 
