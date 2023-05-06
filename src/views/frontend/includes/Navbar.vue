@@ -18,7 +18,7 @@
         </ul>
         <ul class="navbar-nav">
 
-          <li class="nav-item">
+          <li class="nav-item" v-if="user.name">
             <router-link to="cart"  type="button" class="btn btn-warning me-2"
                          data-bs-toggle="tooltip" data-bs-placement="top" title="Login"
             ><i class="fa-solid fa-cart-shopping"></i> {{ cartQuantityCount }}</router-link>
