@@ -17,21 +17,19 @@
           </li>
         </ul>
         <ul class="navbar-nav">
-          <li class="nav-item" >
+          <li class="nav-item" v-if="!user.name">
             <router-link to="login" type="button" class="btn btn-primary me-2"
                          data-bs-toggle="tooltip" data-bs-placement="top" title="Login"
             ><i class="fa-solid fa-user"></i></router-link>
           </li>
-          <li class="nav-item" >
+          <li class="nav-item" v-if="user.name">
             <div class="dropdown">
               <button class="btn btn-info   dropdown-toggle" type="button" id="navbarDropdown"
                       data-bs-toggle="dropdown" aria-expanded="false">
-                name
+                {{ getCurrentUser.name }}
               </button>
-
               <ul class="dropdown-menu " aria-labelledby="navbarDropdown">
-
-                <li><a class="dropdown-item " >Logout</a></li>
+                <li><a class="dropdown-item" role="button" @click="logout">Logout</a></li>
               </ul>
             </div>
           </li>
@@ -42,8 +40,31 @@
 </template>
 
 <script>
+import {mapGetters, mapState} from "vuex";
+import ApiService      from "@/service/api.service";
+import * as JwtService        from "@/service/jwt.service";
+import store                  from "@/store";
 export default {
-  name: "Navbar"
+  name: "Navbar",
+  computed:{
+    ...mapGetters(['getCurrentUser']),
+    ...mapState(['user']),
+  },
+  methods: {
+    logout() {
+      const token = JwtService.getToken();
+      if (typeof token != "undefined") {
+        ApiService.post('/logout').then(res => {
+          console.log('res',res)
+          JwtService.destroyToken();
+          store.commit("LOG_OUT", {});
+          this.$router.push({name: "login"});
+        }).catch(error => {
+          console.log('error', error);
+        })
+      }
+    }
+  }
 }
 </script>
 
